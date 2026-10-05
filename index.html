@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FastRide Trip Manager</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>FastRide</h1>
+        <p>Cab Trip Manager</p>
+    </header>
+
+    <main>
+
+        <!-- Dashboard -->
+        <section class="dashboard">
+
+            <div class="card">
+                <h3>Total Trips</h3>
+                <p id="totalTrips">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Pending</h3>
+                <p id="pendingTrips">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Completed</h3>
+                <p id="completedTrips">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Today's Trips</h3>
+                <p id="todayTrips">0</p>
+            </div>
+
+        </section>
+
+
+        <!-- Add Trip -->
+        <section class="form-section">
+
+            <h2>Add New Trip</h2>
+
+            <form id="tripForm">
+
+                <input
+                    type="text"
+                    id="customerName"
+                    placeholder="Customer Name"
+                    required
+                >
+
+                <input
+                    type="tel"
+                    id="customerPhone"
+                    placeholder="Customer Phone"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="pickup"
+                    placeholder="Pickup Location"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="destination"
+                    placeholder="Destination"
+                    required
+                >
+
+                <input
+                    type="date"
+                    id="tripDate"
+                    required
+                >
+
+                <input
+                    type="time"
+                    id="tripTime"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="driverName"
+                    placeholder="Driver Name"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="vehicleNumber"
+                    placeholder="Vehicle Number"
+                    required
+                >
+
+                <select id="tripStatus">
+
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="On the Way">On the Way</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+
+                </select>
+
+                <button type="submit">
+                    Add Trip
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Search and Filter -->
+        <section class="controls">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search customer, driver or vehicle..."
+            >
+
+            <select id="statusFilter">
+
+                <option value="All">All Trips</option>
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="On the Way">On the Way</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+
+            </select>
+
+        </section>
+
+
+        <!-- Trips -->
+        <section>
+
+            <h2>All Trips</h2>
+
+            <div id="tripList"></div>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
