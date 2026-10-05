@@ -1,412 +1,234 @@
-let trips = JSON.parse(localStorage.getItem("fastRideTrips")) || [];
+let trips = [];
 
 
-const tripForm = document.getElementById("tripForm");
+function addTrip() {
+
+    let customerName =
+        document.getElementById("customerName").value;
+
+    let pickup =
+        document.getElementById("pickup").value;
+
+    let destination =
+        document.getElementById("destination").value;
+
+    let driverName =
+        document.getElementById("driverName").value;
+
+    let vehicleNumber =
+        document.getElementById("vehicleNumber").value;
+
+    let tripDate =
+        document.getElementById("tripDate").value;
+
+    let tripStatus =
+        document.getElementById("tripStatus").value;
+
+    let paymentStatus =
+        document.getElementById("paymentStatus").value;
 
 
+    // Check fields
 
-tripForm.addEventListener("submit", function(event) {
+    if (
+        customerName === "" ||
+        pickup === "" ||
+        destination === "" ||
+        driverName === "" ||
+        vehicleNumber === "" ||
+        tripDate === ""
+    ) {
 
-    event.preventDefault();
+        alert("Please fill all fields.");
 
-    const trip = {
+        return;
+    }
 
-        id: Date.now(),
 
-        customerName:
-            document.getElementById("customerName").value,
+    // Create trip
 
-        customerPhone:
-            document.getElementById("customerPhone").value,
+    let trip = {
 
-        pickup:
-            document.getElementById("pickup").value,
+        customerName: customerName,
 
-        destination:
-            document.getElementById("destination").value,
+        pickup: pickup,
 
-        date:
-            document.getElementById("tripDate").value,
+        destination: destination,
 
-        time:
-            document.getElementById("tripTime").value,
+        driverName: driverName,
 
-        driverName:
-            document.getElementById("driverName").value,
+        vehicleNumber: vehicleNumber,
 
-        vehicleNumber:
-            document.getElementById("vehicleNumber").value,
+        tripDate: tripDate,
 
-        status:
-            document.getElementById("tripStatus").value,
+        tripStatus: tripStatus,
 
-        tasks: {
-
-            confirmCustomer: false,
-
-            assignDriver: false,
-
-            checkVehicle: false,
-
-            startTrip: false,
-
-            completeTrip: false,
-
-            collectPayment: false
-
-        }
+        paymentStatus: paymentStatus
 
     };
 
 
+    // Add trip to array
+
     trips.push(trip);
 
-    saveTrips();
 
-    tripForm.reset();
+    // Show trips
 
     displayTrips();
 
-    updateDashboard();
 
-});
+    // Clear form
 
+    document.getElementById("customerName").value = "";
 
-function saveTrips() {
+    document.getElementById("pickup").value = "";
 
-    localStorage.setItem(
-        "fastRideTrips",
-        JSON.stringify(trips)
-    );
+    document.getElementById("destination").value = "";
+
+    document.getElementById("driverName").value = "";
+
+    document.getElementById("vehicleNumber").value = "";
+
+    document.getElementById("tripDate").value = "";
+
+    document.getElementById("tripStatus").value = "Pending";
+
+    document.getElementById("paymentStatus").value = "Unpaid";
 
 }
 
 
+
 function displayTrips() {
 
-    const tripList = document.getElementById("tripList");
-
-    const search =
-        document.getElementById("searchInput").value.toLowerCase();
-
-    const filter =
-        document.getElementById("statusFilter").value;
+    let tripContainer =
+        document.getElementById("tripContainer");
 
 
-    tripList.innerHTML = "";
+    tripContainer.innerHTML = "";
 
 
-    const filteredTrips = trips.filter(function(trip) {
+    if (trips.length === 0) {
 
-        const matchesSearch =
-            trip.customerName.toLowerCase().includes(search) ||
-            trip.driverName.toLowerCase().includes(search) ||
-            trip.vehicleNumber.toLowerCase().includes(search);
+        tripContainer.innerHTML =
+            '<p class="empty">No trips added yet.</p>';
 
-        const matchesStatus =
-            filter === "All" ||
-            trip.status === filter;
-
-        return matchesSearch && matchesStatus;
-
-    });
-
-
-    if (filteredTrips.length === 0) {
-
-        tripList.innerHTML =
-            "<p>No trips found.</p>";
+        updateDashboard();
 
         return;
-
     }
 
 
-    filteredTrips.forEach(function(trip) {
+    trips.forEach(function(trip, index) {
 
-        const tripElement = document.createElement("div");
+        let tripElement =
+            document.createElement("div");
 
         tripElement.className = "trip";
 
 
         tripElement.innerHTML = `
 
-            <h3>${trip.customerName}</h3>
+            <h3>🚕 ${trip.customerName}</h3>
 
             <p>
-                <strong>Phone:</strong>
-                ${trip.customerPhone}
-            </p>
-
-            <p>
-                <strong>Pickup:</strong>
+                <strong>📍 Pickup:</strong>
                 ${trip.pickup}
             </p>
 
             <p>
-                <strong>Destination:</strong>
+                <strong>🏁 Destination:</strong>
                 ${trip.destination}
             </p>
 
             <p>
-                <strong>Date:</strong>
-                ${trip.date}
-            </p>
-
-            <p>
-                <strong>Time:</strong>
-                ${trip.time}
-            </p>
-
-            <p>
-                <strong>Driver:</strong>
+                <strong>👨‍✈️ Driver:</strong>
                 ${trip.driverName}
             </p>
 
             <p>
-                <strong>Vehicle:</strong>
+                <strong>🚗 Vehicle:</strong>
                 ${trip.vehicleNumber}
             </p>
 
-            <span class="status">
-                ${trip.status}
-            </span>
+            <p>
+                <strong>📅 Date:</strong>
+                ${trip.tripDate}
+            </p>
 
+            <p>
+                <strong>🔄 Status:</strong>
+                <span class="status">
+                    ${trip.tripStatus}
+                </span>
+            </p>
 
-            <div class="tasks">
+            <p>
+                <strong>💰 Payment:</strong>
+                ${trip.paymentStatus}
+            </p>
 
-                <h4>Trip Tasks</h4>
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'confirmCustomer')"
-                        ${trip.tasks.confirmCustomer ? "checked" : ""}
-                    >
-                    Confirm customer
-                </label>
-
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'assignDriver')"
-                        ${trip.tasks.assignDriver ? "checked" : ""}
-                    >
-                    Assign driver
-                </label>
-
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'checkVehicle')"
-                        ${trip.tasks.checkVehicle ? "checked" : ""}
-                    >
-                    Check vehicle
-                </label>
-
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'startTrip')"
-                        ${trip.tasks.startTrip ? "checked" : ""}
-                    >
-                    Start trip
-                </label>
-
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'completeTrip')"
-                        ${trip.tasks.completeTrip ? "checked" : ""}
-                    >
-                    Complete trip
-                </label>
-
-
-                <label>
-                    <input
-                        type="checkbox"
-                        onchange="updateTask(${trip.id}, 'collectPayment')"
-                        ${trip.tasks.collectPayment ? "checked" : ""}
-                    >
-                    Collect payment
-                </label>
-
-            </div>
-
-
-            <div class="trip-buttons">
-
-                <button
-                    class="complete"
-                    onclick="markCompleted(${trip.id})"
-                >
-                    Mark Completed
-                </button>
-
-                <button
-                    class="delete"
-                    onclick="deleteTrip(${trip.id})"
-                >
-                    Delete
-                </button>
-
-            </div>
+            <button
+                class="delete-btn"
+                onclick="deleteTrip(${index})"
+            >
+                🗑️ Delete Trip
+            </button>
 
         `;
 
 
-        tripList.appendChild(tripElement);
+        tripContainer.appendChild(tripElement);
 
     });
 
-}
-
-
-function deleteTrip(id) {
-
-    const confirmDelete =
-        confirm("Are you sure you want to delete this trip?");
-
-    if (!confirmDelete) {
-        return;
-    }
-
-
-    trips = trips.filter(function(trip) {
-
-        return trip.id !== id;
-
-    });
-
-
-    saveTrips();
-
-    displayTrips();
 
     updateDashboard();
 
 }
 
 
-function markCompleted(id) {
 
-    const trip = trips.find(function(trip) {
+function deleteTrip(index) {
 
-        return trip.id === id;
+    trips.splice(index, 1);
 
-    });
-
-
-    if (trip) {
-
-        trip.status = "Completed";
-
-        trip.tasks.completeTrip = true;
-
-        saveTrips();
-
-        displayTrips();
-
-        updateDashboard();
-
-    }
+    displayTrips();
 
 }
 
-
-function updateTask(id, taskName) {
-
-    const trip = trips.find(function(trip) {
-
-        return trip.id === id;
-
-    });
-
-
-    if (trip) {
-
-        trip.tasks[taskName] =
-            !trip.tasks[taskName];
-
-        saveTrips();
-
-        displayTrips();
-
-    }
-
-}
 
 
 function updateDashboard() {
 
-    const total =
+    let total =
         trips.length;
 
 
-    const pending =
+    let pending =
         trips.filter(function(trip) {
 
-            return trip.status === "Pending";
+            return trip.tripStatus === "Pending";
 
         }).length;
 
 
-    const completed =
+    let completed =
         trips.filter(function(trip) {
 
-            return trip.status === "Completed";
+            return trip.tripStatus === "Completed";
 
         }).length;
 
 
-    const today =
-        new Date().toISOString().split("T")[0];
+    document.getElementById("totalTrips").innerText =
+        total;
 
+    document.getElementById("pendingTrips").innerText =
+        pending;
 
-    const todayTrips =
-        trips.filter(function(trip) {
-
-            return trip.date === today;
-
-        }).length;
-
-
-    document.getElementById("totalTrips")
-        .textContent = total;
-
-    document.getElementById("pendingTrips")
-        .textContent = pending;
-
-    document.getElementById("completedTrips")
-        .textContent = completed;
-
-    document.getElementById("todayTrips")
-        .textContent = todayTrips;
+    document.getElementById("completedTrips").innerText =
+        completed;
 
 }
-
-
-document.getElementById("searchInput")
-    .addEventListener("input", function() {
-
-        displayTrips();
-
-    });
-
-
-document.getElementById("statusFilter")
-    .addEventListener("change", function() {
-
-        displayTrips();
-
-    });
-
-
-displayTrips();
-
-updateDashboard();
